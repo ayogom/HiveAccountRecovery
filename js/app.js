@@ -1,11 +1,11 @@
-const client = new dsteem.Client(["https://api.hive.blog", "https://api.hivekings.com", "https://anyx.io", "https://api.openhive.network"]);
+const client = new dhive.Client(["https://api.hive.blog", "https://api.hivekings.com", "https://anyx.io", "https://api.openhive.network"]);
 
 // Generates Aall Private Keys from username and password
 function getPrivateKeys(username, password, roles = ['owner', 'active', 'posting', 'memo']) {
   const privKeys = {};
   roles.forEach((role) => {
-    privKeys[role] = dsteem.PrivateKey.fromLogin(username, password, role).toString();
-    privKeys[`${role}Pubkey`] = dsteem.PrivateKey.from(privKeys[role]).createPublic().toString();
+    privKeys[role] = dhive.PrivateKey.fromLogin(username, password, role).toString();
+    privKeys[`${role}Pubkey`] = dhive.PrivateKey.from(privKeys[role]).createPublic().toString();
   });
 
   return privKeys;
@@ -15,7 +15,7 @@ function getPrivateKeys(username, password, roles = ['owner', 'active', 'posting
 function suggestPassword() {
   const array = new Uint32Array(10);
   window.crypto.getRandomValues(array);
-  return 'P'+dsteem.PrivateKey.fromSeed(array).toString();
+  return 'P'+dhive.PrivateKey.fromSeed(array).toString();
 }
 
 // Getting public owner key from username and password
@@ -88,11 +88,11 @@ $(document).ready(async function() {
         const op = ['request_account_recovery', {
           recovery_account: trustee,
           account_to_recover: username,
-          new_owner_authority: dsteem.Authority.from(ownerPubKey),
+          new_owner_authority: dhive.Authority.from(ownerPubKey),
           extensions: []
         }];
 
-        client.broadcast.sendOperations([op], dsteem.PrivateKey.from(activeKey))
+        client.broadcast.sendOperations([op], dhive.PrivateKey.from(activeKey))
           .then((r) => {
             console.log(r);
             feedback.addClass('alert-success').html(`Account recovery request for <strong>${username}</strong> has been submitted successfully.`);
@@ -132,14 +132,14 @@ $(document).ready(async function() {
 
         const op = ['recover_account', {
             account_to_recover: username,
-            new_owner_authority: dsteem.Authority.from(newOwner.ownerPubkey),
-            recent_owner_authority: dsteem.Authority.from(oldOwner.ownerPubkey),
+            new_owner_authority: dhive.Authority.from(newOwner.ownerPubkey),
+            recent_owner_authority: dhive.Authority.from(oldOwner.ownerPubkey),
             extensions: []
           }
         ];
 
         // Signing the operation with both old and new owner key
-        client.broadcast.sendOperations([op], [dsteem.PrivateKey.from(oldOwner.owner), dsteem.PrivateKey.from(newOwner.owner)])
+        client.broadcast.sendOperations([op], [dhive.PrivateKey.from(oldOwner.owner), dhive.PrivateKey.from(newOwner.owner)])
           .then((r) => {
             console.log(r);
             feedback.addClass('alert-success').html(`<strong>${username}</strong> has been recovered successfully.</strong>`);
@@ -175,7 +175,7 @@ $(document).ready(async function() {
 
       const ownerKey = getPrivateKeys(username, password, ['owner']);
 
-      client.broadcast.sendOperations([op], dsteem.PrivateKey.from(ownerKey.owner))
+      client.broadcast.sendOperations([op], dhive.PrivateKey.from(ownerKey.owner))
         .then((r) => {
           console.log(r);
           feedback.addClass('alert-success').html(`Change account recovery request for <strong>${username}</strong> has been submitted successfully. It would take 30 days to take effect.`);
