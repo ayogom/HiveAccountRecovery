@@ -1,4 +1,4 @@
-const client = new dsteem.Client('https://api.hive.blog');
+const client = new dsteem.Client('https://rpc.ausbit.dev');
 
 // Generates Aall Private Keys from username and password
 function getPrivateKeys(username, password, roles = ['owner', 'active', 'posting', 'memo']) {
